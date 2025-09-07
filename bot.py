@@ -1,19 +1,16 @@
 import discord
 from discord.ext import commands
-from discord.ui import View, Button
+from discord.ui import Button, View
 import os
 
-# --- トークン読み込み ---
-TOKEN = os.getenv("DISCORD_TOKEN")
-if not TOKEN:
-    raise ValueError("環境変数 DISCORD_TOKEN が設定されていません！")
-
 intents = discord.Intents.default()
-intents.members = True  # メンバー情報を扱うために必要
+intents.message_content = True  # ← これが大事！
+intents.members = True          # メンバー操作に必要
+
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# 動的に登録される移動設定 { label: (user_id, channel_id) }
-MOVE_SETTINGS = {}
+move_settings = {}
+
 
 class MoveButtonView(View):
     def __init__(self):
