@@ -17,6 +17,34 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f"Bot is ready. Logged in as {bot.user}")
 
+# ボイス移動用ボタン
+class MoveButton(discord.ui.View):
+    def __init__(self, member: discord.Member, channel: discord.VoiceChannel):
+        super().__init__(timeout=None)  # 永続的に表示
+        self.member = member
+        self.channel = channel
+
+    @discord.ui.button(label="移動", style=discord.ButtonStyle.primary)
+    async def move_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        try:
+            await self.member.move_to(self.channel)
+            await interaction.response.send_message(
+                f"✅ {self.member.display_name} を {self.channel.name} に移動しました", ephemeral=True
+            )
+        except Exception as e:
+            await interaction.response.send_message(
+                f"❌ 移動に失敗しました: {e}", ephemeral=True
+            )
+
+# テスト用コマンドでボタンを送信
+@bot.command()
+async def button_move(ctx, member: discord.Member, channel: discord.VoiceChannel):
+    view = MoveButton(member, channel)
+    await ctx.send(
+        f"{member.display_name} を {channel.name} に移動させるボタンです",
+        view=view
+    )
+
 # 複数ユーザー用のView
 class MultiMoveView(discord.ui.View):
     def __init__(self, moves: list[tuple[discord.Member, discord.VoiceChannel]]):
