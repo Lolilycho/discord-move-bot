@@ -43,3 +43,69 @@ Discordサーバー内でユーザーを任意のボイスチャンネルに移�
 
 Botトークンは `.env` で管理:
 
+DISCORD_TOKEN=あなたのBotトークン
+
+
+---
+
+## 🔹 インストール手順
+
+# ディレクトリ移動
+cd /home/ec2-user/discord-move-bot
+
+# 依存パッケージをインストール
+pip3 install -r requirements.txt
+
+# Bot起動
+python3 bot.py
+
+🔹 systemd サービス化（常時稼働）
+サービスファイル作成
+sudo nano /etc/systemd/system/discordbot.service
+
+[Unit]
+Description=Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/discord-move-bot
+ExecStart=/usr/bin/python3 /home/ec2-user/discord-move-bot/bot.py
+Restart=always
+Environment="DISCORD_TOKEN=あなたのトークン"
+
+[Install]
+WantedBy=multi-user.target
+
+起動・有効化
+sudo systemctl daemon-reload
+sudo systemctl enable discordbot
+sudo systemctl start discordbot
+
+
+フロー図：
+
+systemd
+   │
+   ├─> bot.py 常時稼働
+   │
+   └─> ボタン/コマンドでユーザー移動や遊び操作
+
+🔹 更新方法
+サーバー上でワンコマンド更新
+./update_bot.sh
+
+
+GitHubから最新コードを取得
+
+Python依存パッケージを更新
+
+Botを再起動
+
+フロー図：
+
+./update_bot.sh
+   ├─> git pull → 最新コード取得
+   ├─> pip install → 依存パッケージ更新
+   └─> systemctl restart discordbot → Bot再起動
