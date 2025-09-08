@@ -26,7 +26,7 @@ async def ping(ctx):
     !ping と送信すると応答時間を返す
     """
     latency = round(bot.latency * 1000)  # ミリ秒に変換
-    await ctx.send(f"Pong! {latency}ms")
+    await ctx.send(f"Pong! ({latency}ms)")
 
 # -----------------------------------------
 # 単体ユーザー移動ボタン
