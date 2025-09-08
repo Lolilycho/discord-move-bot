@@ -145,6 +145,24 @@ async def move_all(ctx, channel: discord.VoiceChannel, *members: discord.Member)
     view = MoveAllView(list(members), channel)
     await ctx.send(f"{channel.name} にまとめて移動させるボタンです", view=view)
 
+
+# !grilled_bottle コマンド
+@bot.command()
+async def grilled_bottle(ctx):
+    # ボタンを作成
+    button = Button(label="瓶を熱する", style=discord.ButtonStyle.primary)
+
+    async def button_callback(interaction):
+        await interaction.response.send_message("ビンを炙ったら【炙りビン】になるよ！", ephemeral=True)
+
+    button.callback = button_callback
+
+    # View にボタンをセット
+    view = View()
+    view.add_item(button)
+
+    await ctx.send("ボタンを押してみてね！", view=view)
+
 # -----------------------------------------
 # Bot起動
 # -----------------------------------------
