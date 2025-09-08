@@ -17,11 +17,16 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f"Bot is ready. Logged in as {bot.user}")
 
-# ping pong
+# -----------------------------------------
+# ping コマンド
+# -----------------------------------------
 @bot.command()
 async def ping(ctx):
-    latency = round(bot.latency * 1000)  # ms に変換
-    await ctx.send(f"pong ({latency}ms)")
+    """
+    !ping と送信すると応答時間を返す
+    """
+    latency = round(bot.latency * 1000)  # ミリ秒に変換
+    await ctx.send(f"Pong! {latency}ms")
 
 # -----------------------------------------
 # 単体ユーザー移動ボタン
