@@ -9,6 +9,11 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f"Bot is ready. Logged in as {bot.user}")
 
+# Pingテスト用
+@bot.command()
+async def ping(ctx):
+    await ctx.send("Pong!")
+
 # ユーザーを指定VCに移動
 @bot.command()
 async def move(ctx, member: discord.Member, channel: discord.VoiceChannel):
