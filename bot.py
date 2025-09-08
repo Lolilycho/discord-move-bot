@@ -20,7 +20,7 @@ async def on_ready():
 # -----------------------------------------
 # 単体ユーザー移動ボタン
 # -----------------------------------------
-class MoveButtonView(discord.ui.View):
+class SingleMoveButtonView(discord.ui.View):
     def __init__(self, member: discord.Member, channel: discord.VoiceChannel):
         super().__init__(timeout=None)
         self.member = member
@@ -40,7 +40,7 @@ class MoveButtonView(discord.ui.View):
 
 @bot.command()
 async def button_move(ctx, member: discord.Member, channel: discord.VoiceChannel):
-    view = MoveButtonView(member, channel)
+    view = SingleMoveButtonView(member, channel)
     await ctx.send(
         f"{member.display_name} を {channel.name} に移動させるボタンです",
         view=view
