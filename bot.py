@@ -17,10 +17,12 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f"Bot is ready. Logged in as {bot.user}")
 
-# ボイス移動用ボタン
-class MoveButton(discord.ui.View):
+# -----------------------------------------
+# 単体ユーザー移動ボタン
+# -----------------------------------------
+class MoveButtonView(discord.ui.View):
     def __init__(self, member: discord.Member, channel: discord.VoiceChannel):
-        super().__init__(timeout=None)  # 永続的に表示
+        super().__init__(timeout=None)
         self.member = member
         self.channel = channel
 
@@ -36,23 +38,24 @@ class MoveButton(discord.ui.View):
                 f"❌ 移動に失敗しました: {e}", ephemeral=True
             )
 
-# テスト用コマンドでボタンを送信
 @bot.command()
 async def button_move(ctx, member: discord.Member, channel: discord.VoiceChannel):
-    view = MoveButton(member, channel)
+    view = MoveButtonView(member, channel)
     await ctx.send(
         f"{member.display_name} を {channel.name} に移動させるボタンです",
         view=view
     )
 
-# 複数ユーザー用のView
+# -----------------------------------------
+# 複数ユーザー個別ボタン
+# -----------------------------------------
 class MultiMoveView(discord.ui.View):
     def __init__(self, moves: list[tuple[discord.Member, discord.VoiceChannel]]):
         super().__init__(timeout=None)
         for member, channel in moves:
-            self.add_item(MoveButton(member, channel))
+            self.add_item(MultiMoveButton(member, channel))
 
-class MoveButton(discord.ui.Button):
+class MultiMoveButton(discord.ui.Button):
     def __init__(self, member: discord.Member, channel: discord.VoiceChannel):
         super().__init__(label=f"{member.display_name} → {channel.name}", style=discord.ButtonStyle.primary)
         self.member = member
@@ -69,7 +72,6 @@ class MoveButton(discord.ui.Button):
                 f"❌ 移動に失敗しました: {e}", ephemeral=True
             )
 
-# コマンドで複数ユーザーのボタンを作成
 @bot.command()
 async def multi_move(ctx, *args):
     """
@@ -89,4 +91,50 @@ async def multi_move(ctx, *args):
     view = MultiMoveView(moves)
     await ctx.send("移動ボタンです", view=view)
 
+# -----------------------------------------
+# まとめて移動ボタン（1つのボタンで全員）
+# -----------------------------------------
+class MoveAllView(discord.ui.View):
+    def __init__(self, members: list[discord.Member], channel: discord.VoiceChannel):
+        super().__init__(timeout=None)
+        self.members = members
+        self.channel = channel
+
+        button = discord.ui.Button(label=f"まとめて {channel.name} に移動", style=discord.ButtonStyle.success)
+        button.callback = self.move_all_callback
+        self.add_item(button)
+
+    async def move_all_callback(self, interaction: discord.Interaction):
+        moved = []
+        failed = []
+        for member in self.members:
+            try:
+                await member.move_to(self.channel)
+                moved.append(member.display_name)
+            except Exception as e:
+                failed.append(f"{member.display_name} ({e})")
+
+        msg = ""
+        if moved:
+            msg += f"✅ 移動成功: {', '.join(moved)}\n"
+        if failed:
+            msg += f"❌ 移動失敗: {', '.join(failed)}"
+        await interaction.response.send_message(msg, ephemeral=True)
+
+@bot.command()
+async def move_all(ctx, channel: discord.VoiceChannel, *members: discord.Member):
+    """
+    使い方例:
+    !move_all #会議室 @太郎 @花子 @次郎
+    """
+    if not members:
+        await ctx.send("移動するメンバーを1人以上指定してください")
+        return
+
+    view = MoveAllView(list(members), channel)
+    await ctx.send(f"{channel.name} にまとめて移動させるボタンです", view=view)
+
+# -----------------------------------------
+# Bot起動
+# -----------------------------------------
 bot.run(TOKEN)
