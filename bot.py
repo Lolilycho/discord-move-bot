@@ -160,7 +160,9 @@ async def dice(ctx, sides: int = 6):
     await ctx.send(f"{sides}面サイコロの結果: **{result}**")
 
 @bot.command()
-async def lucky(ctx, name: str):
+async def lucky(ctx, name: str = None):
+    if not name:
+        name = ctx.author.display_name
     number = random.randint(1, 100)
     await ctx.send(f"{name} さんの今日のラッキーナンバーは **{number}** です✨")
 
