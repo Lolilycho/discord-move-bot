@@ -183,7 +183,7 @@ async def nanoka(ctx):
         await ctx.send("なら……ナノカちゃんは猫になったとか考えられないかな？\n魔女の使い魔といったら猫なところあるし……。")
 
 @bot.command()
-async def nanoka(ctx):
+async def tea_party(ctx):
     await ctx.send("ちょっと待ってよ……！\nどうしてそのパーティーにボクが誘われてないの……！？")
 
 # -------------------------
