@@ -186,6 +186,28 @@ async def nanoka(ctx):
 async def tea_party(ctx):
     await ctx.send("ちょっと待ってよ……！\nどうしてそのパーティーにボクが誘われてないの……！？")
 
+# ボタン定義
+class MemoButton(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="…………22……？", style=discord.ButtonStyle.success)
+    async def button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # ボタンを押したときの定型文
+        await interaction.response.send_message("なんあんだろうね？このメモ。")
+
+# 起動時イベント
+@bot.event
+async def on_ready():
+    print(f"ログインしました: {bot.user}")
+
+# !memo コマンド
+@bot.command()
+async def memo(ctx):
+    """!memo で定型文とボタンを表示"""
+    view = MemoButton()
+    await ctx.send("ナノカちゃんが持っていたメモだよ！これが犯人を示してるんじゃないかな……！\n【169231】\n全部の数字を足してみて、ココちゃん！", view=view)
+
 # -------------------------
 # Bot起動
 # -------------------------
