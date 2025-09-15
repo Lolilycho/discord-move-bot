@@ -194,7 +194,7 @@ class MemoButton(discord.ui.View):
     @discord.ui.button(label="…………22……？", style=discord.ButtonStyle.success)
     async def button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         # ボタンを押したときの定型文
-        await interaction.response.send_message("なんあんだろうね？このメモ。")
+        await interaction.response.send_message("なんなんだろうね？このメモ。")
 
 # 起動時イベント
 @bot.event
